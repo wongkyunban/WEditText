@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AnimationDropDown">
+        <item name="android:windowEnterAnimation">@anim/drop_down_fade_in</item>
+        <item name="android:windowExitAnimation">@anim/drop_down_fade_out</item>
+    </style>
+
+
+    <style name="AnimationPopup">
+        <item name="android:windowEnterAnimation">@anim/popup_fade_in</item>
+        <item name="android:windowExitAnimation">@anim/popup_fade_out</item>
+    </style>
+</resources>

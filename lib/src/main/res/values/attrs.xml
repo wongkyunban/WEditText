@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SpinnerEditText">
+        <attr name="popup_text_color" format="color"/>
+        <attr name="popup_text_size" format="dimension"/>
+        <attr name="popup_min_height" format="dimension"/>
+        <attr name="popup_max_height" format="dimension"/>
+    </declare-styleable>
+    <declare-styleable name="SimpleSpinnerEditText">
+        <attr name="popup_background" format="reference"/>
+        <attr name="popup_divider" format="reference"/>
+        <attr name="popup_divider_height" format="dimension"/>
+    </declare-styleable>
+
+</resources>
