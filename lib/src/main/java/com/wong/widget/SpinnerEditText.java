@@ -148,6 +148,11 @@ public class SpinnerEditText extends AppCompatEditText implements AdapterView.On
         }
     }
 
+    public void setSelectDrawable(Drawable drawable){
+        this.drawable = drawable;
+        super.setCompoundDrawables(getCompoundDrawables()[0],getCompoundDrawables()[1],drawable,getCompoundDrawables()[3]);
+    }
+
     @Override
     public void setCompoundDrawables(@Nullable Drawable left, @Nullable Drawable top, @Nullable Drawable right, @Nullable Drawable bottom) {
         super.setCompoundDrawables(left, top, right, bottom);
@@ -158,10 +163,6 @@ public class SpinnerEditText extends AppCompatEditText implements AdapterView.On
     public void setCompoundDrawablesRelative(@Nullable Drawable start, @Nullable Drawable top, @Nullable Drawable end, @Nullable Drawable bottom) {
         super.setCompoundDrawablesRelative(start, top, end, bottom);
         drawable = end;
-    }
-    public void setSelectDrawable(Drawable drawable){
-        this.drawable = drawable;
-        super.setCompoundDrawables(getCompoundDrawables()[0],getCompoundDrawables()[1],drawable,getCompoundDrawables()[3]);
     }
 
     @Override
@@ -337,10 +338,10 @@ public class SpinnerEditText extends AppCompatEditText implements AdapterView.On
         return mOptions;
     }
 
-    public void setOptions(List<Object> mOptions) {
-        this.mOptions = mOptions;
-        this.displayedOptions.addAll(mOptions);
-        if(ObjectUtils.isNotNull(mOptions) && mOptions.size() > 0){
+    public void setOptions(List<Object> options) {
+        this.mOptions = options;
+        this.displayedOptions.addAll(options);
+        if(ObjectUtils.isNotNull(options) && options.size() > 0){
             setDrawableVisibility(true);
         }else{
             setDrawableVisibility(false);

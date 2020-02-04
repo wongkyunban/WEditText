@@ -140,6 +140,10 @@ public class SimpleSpinnerEditText extends AppCompatEditText implements AdapterV
             mListView.setDividerHeight((int)popupDividerHeight);
         }
     }
+    public void setSelectDrawable(Drawable drawable){
+        this.drawable = drawable;
+        super.setCompoundDrawables(getCompoundDrawables()[0],getCompoundDrawables()[1],drawable,getCompoundDrawables()[3]);
+    }
 
     @Override
     public void setCompoundDrawables(@Nullable Drawable left, @Nullable Drawable top, @Nullable Drawable right, @Nullable Drawable bottom) {
@@ -151,10 +155,6 @@ public class SimpleSpinnerEditText extends AppCompatEditText implements AdapterV
     public void setCompoundDrawablesRelative(@Nullable Drawable start, @Nullable Drawable top, @Nullable Drawable end, @Nullable Drawable bottom) {
         super.setCompoundDrawablesRelative(start, top, end, bottom);
         drawable = end;
-    }
-    public void setSelectDrawable(Drawable drawable){
-        this.drawable = drawable;
-        super.setCompoundDrawables(getCompoundDrawables()[0],getCompoundDrawables()[1],drawable,getCompoundDrawables()[3]);
     }
 
     @Override
