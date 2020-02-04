@@ -22,6 +22,7 @@ dependencies {
 
 # Detail
 ## ClearEditText
+
 |API|Desc|
 |--|--|
 |setClearDrawable(Drawable)|set clear button image as same as setCompoundDrawables()|
