@@ -1,4 +1,5 @@
 [![](https://jitpack.io/v/wongkyunban/WEditText.svg)](https://jitpack.io/#wongkyunban/WEditText)
+
 # WEditText
 ClearEditText SimpleSpinnerEditText SpinnerEditText库
 
@@ -23,7 +24,7 @@ dependencies {
 # Detail
 ## ClearEditText
 
-![image](https://github.com/wongkyunban/WEditText/tree/master/snapshot/snapshot1.png)
+[![image](https://github.com/wongkyunban/WEditText/tree/master/snapshot/snapshot1.png)]
 
 |API|Desc|
 |--|--|
