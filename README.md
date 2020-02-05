@@ -58,7 +58,7 @@ BaseAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_lis
 simpleSpinnerEditText.setAdapter(adapter);
 ```
 ## SpinnerEditText
-SpinnerEditText is a little from SimpleEditText.They both provide editting and selecting options.SpinnerEditText can show items which containe the characters that you are typing.
+SpinnerEditText is a little from SimpleSpinnerEditText.They both provide editting and selecting options.SpinnerEditText can show items which containe the characters that you are typing.
 
 ![](snapshot/snapshot3.png)
 
