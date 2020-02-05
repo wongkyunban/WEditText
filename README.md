@@ -17,7 +17,7 @@ allprojects {
 __Step 2.__ Add the dependency
 ```java
 dependencies {
-  implementation 'com.github.wongkyunban:WEditText:Tag'
+  implementation 'com.github.wongkyunban:WEditText:v1.0.1'
 }
 ```
 
