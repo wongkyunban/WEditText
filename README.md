@@ -25,7 +25,7 @@ dependencies {
 # Detail
 ## ClearEditText
 
-![image](https://github.com/wongkyunban/WEditText/tree/master/snapshot/snapshot1.png)
+![](snapshot/snapshot1.png)
 
 |API|Desc|
 |--|--|
@@ -34,7 +34,7 @@ dependencies {
 We also can set drawable through attribute `android:drawableEnd` or `android:drawableRight` in xml layout.
 ## SimpleSpinnerEditText
 
-![image](https://github.com/wongkyunban/WEditText/tree/master/snapshot/snapshot2.png)
+![](snapshot/snapshot2.png)
 
 
 |API|Desc|
@@ -60,7 +60,7 @@ simpleSpinnerEditText.setAdapter(adapter);
 ## SpinnerEditText
 SpinnerEditText is a little from SimpleEditText.They both provide editting and selecting options.SpinnerEditText can show items which containe the characters that you are typing.
 
-![image](https://github.com/wongkyunban/WEditText/tree/master/snapshot/snapshot3.png)
+![](snapshot/snapshot3.png)
 
 
 |API|Desc|
