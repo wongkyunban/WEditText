@@ -8,14 +8,14 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatEditText;
 
 import com.wong.animation.AnimationHelper;
 
 
-public class ClearEditText extends AppCompatEditText implements View.OnFocusChangeListener, TextWatcher {
+public class ClearEditText extends EditText implements View.OnFocusChangeListener, TextWatcher {
     private boolean hasFocus;
     private Drawable drawable;
 

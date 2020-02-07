@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.ActionMode;
@@ -18,12 +19,12 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatEditText;
 
 import com.wong.utils.DensityUtils;
 import com.wong.utils.ObjectUtils;
@@ -38,7 +39,7 @@ import com.wong.utils.ObjectUtils;
  * BaseAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, strings);
  * simpleSpinnerEditText.setAdapter(adapter);
  */
-public class SimpleSpinnerEditText extends AppCompatEditText implements AdapterView.OnItemClickListener {
+public class SimpleSpinnerEditText extends EditText implements AdapterView.OnItemClickListener {
     /*popup window to show the selection*/
     private PopupWindow mPopupWindow;
     /*View to list the data item*/
@@ -88,10 +89,17 @@ public class SimpleSpinnerEditText extends AppCompatEditText implements AdapterV
         mPopupWindow.setOutsideTouchable(true);
         mPopupWindow.setFocusable(false);
 
-
-        drawable = getCompoundDrawablesRelative()[2] == null ? getCompoundDrawables()[2] : getCompoundDrawablesRelative()[2];
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1){
+            drawable = getCompoundDrawablesRelative()[2] == null ? getCompoundDrawables()[2] : getCompoundDrawablesRelative()[2];
+        }else{
+            drawable = getCompoundDrawables()[2];
+        }
         if (ObjectUtils.isNull(drawable)) {
-            drawable = getContext().getResources().getDrawable(R.drawable.ic_arrow_down_black, null);
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                drawable = getContext().getResources().getDrawable(R.drawable.ic_arrow_down_black, null);
+            }else{
+                drawable = getContext().getResources().getDrawable(R.drawable.ic_arrow_down_black);
+            }
             drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         }
         this.setCustomSelectionActionModeCallback(new ActionMode.Callback() {

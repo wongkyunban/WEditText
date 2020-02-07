@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -22,12 +23,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatEditText;
 
 import com.wong.utils.DensityUtils;
 import com.wong.utils.ObjectUtils;
@@ -45,7 +46,7 @@ import java.util.List;
  * BaseAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, strings);
  * simpleSpinnerEditText.setAdapter(adapter);
  */
-public class SpinnerEditText extends AppCompatEditText implements AdapterView.OnItemClickListener,TextWatcher {
+public class SpinnerEditText extends EditText implements AdapterView.OnItemClickListener,TextWatcher {
     /*popup window to show the selection*/
     private PopupWindow mPopupWindow;
     /*View to list the data item*/
@@ -83,8 +84,13 @@ public class SpinnerEditText extends AppCompatEditText implements AdapterView.On
             popupDividerHeight = typedArray.getDimension(R.styleable.SimpleSpinnerEditText_popup_divider_height, DensityUtils.dp2px(context, 1));
             typedArray.recycle();
         }
-        popupBackground = ObjectUtils.isNull(popupBackground) ? context.getResources().getDrawable(R.drawable.popup_window_bg, null) : popupBackground;
-        popupDivider = ObjectUtils.isNull(popupDivider) ? context.getResources().getDrawable(R.drawable.divider_bg, null) : popupDivider;
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            popupBackground = ObjectUtils.isNull(popupBackground) ? context.getResources().getDrawable(R.drawable.popup_window_bg, null) : popupBackground;
+            popupDivider = ObjectUtils.isNull(popupDivider) ? context.getResources().getDrawable(R.drawable.divider_bg, null) : popupDivider;
+        }else{
+            popupBackground = ObjectUtils.isNull(popupBackground) ? context.getResources().getDrawable(R.drawable.popup_window_bg) : popupBackground;
+            popupDivider = ObjectUtils.isNull(popupDivider) ? context.getResources().getDrawable(R.drawable.divider_bg) : popupDivider;
+        }
 
         setLongClickable(false);
         setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
@@ -99,9 +105,18 @@ public class SpinnerEditText extends AppCompatEditText implements AdapterView.On
         mPopupWindow.setFocusable(false);
 
 
-        drawable = getCompoundDrawablesRelative()[2] == null ? getCompoundDrawables()[2] : getCompoundDrawablesRelative()[2];
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1){
+            drawable = getCompoundDrawablesRelative()[2] == null ? getCompoundDrawables()[2] : getCompoundDrawablesRelative()[2];
+        }else{
+            drawable = getCompoundDrawables()[2];
+        }
+
         if (ObjectUtils.isNull(drawable)) {
-            drawable = getContext().getResources().getDrawable(R.drawable.ic_arrow_down_black, null);
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                drawable = getContext().getResources().getDrawable(R.drawable.ic_arrow_down_black, null);
+            }else{
+                drawable = getContext().getResources().getDrawable(R.drawable.ic_arrow_down_black);
+            }
             drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         }
         this.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
