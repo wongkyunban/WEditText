@@ -2,20 +2,21 @@ package com.wong.widget;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.EditText;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatEditText;
 
 import com.wong.animation.AnimationHelper;
 
 
-public class ClearEditText extends EditText implements View.OnFocusChangeListener, TextWatcher {
+public class ClearEditText extends AppCompatEditText implements View.OnFocusChangeListener, TextWatcher {
     private boolean hasFocus;
     private Drawable drawable;
 
@@ -43,7 +44,12 @@ public class ClearEditText extends EditText implements View.OnFocusChangeListene
         addTextChangedListener(this);
         drawable = getCompoundDrawablesRelative()[2] == null ? getCompoundDrawables()[2]:getCompoundDrawablesRelative()[2];
         if(drawable == null){
-            drawable = getContext().getResources().getDrawable(R.drawable.ic_backspace_black,null);
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                drawable = getContext().getResources().getDrawable(R.drawable.ic_backspace_black,null);
+            }else{
+                drawable = getContext().getResources().getDrawable(R.drawable.ic_backspace_black);
+            }
+
             drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
         }
         /*hide the clear button*/

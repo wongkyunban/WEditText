@@ -23,13 +23,15 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatEditText;
 
+import com.wong.adapter.SpinnerEditTextAdapter;
 import com.wong.utils.DensityUtils;
 import com.wong.utils.ObjectUtils;
 
@@ -38,26 +40,31 @@ import java.util.List;
 
 /**
  * usage demo:
- * String[] strings = new String[10];
- * for (int i = 0; i < 10; i++) {
- * strings[i] = "No." + i + "号";
- * }
- * SimpleSpinnerEditText simpleSpinnerEditText = findViewById(R.id.sset);
- * BaseAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, strings);
- * simpleSpinnerEditText.setAdapter(adapter);
+ *         SpinnerEditText spinnerEditText = (SpinnerEditText)findViewById(R.id.set_select_input);
+ *         List<String> list = new ArrayList<String>();
+ *         for (int i = 0; i < 50; i++) {
+ *             list.add("NNo." + i + "号");
+ *         }
+ *         spinnerEditText.setOptions(list);
+ *         spinnerEditText.setItemTextColor(0xff00ff00);
+ *         spinnerEditText.setItemTextSize(DensityUtils.sp2px(this,10));
  */
-public class SpinnerEditText extends EditText implements AdapterView.OnItemClickListener,TextWatcher {
+public class SpinnerEditText extends AppCompatEditText implements AdapterView.OnItemClickListener, TextWatcher {
     /*popup window to show the selection*/
     private PopupWindow mPopupWindow;
     /*View to list the data item*/
     private ListView mListView;
+    private int itemTextColor = Color.BLACK;
+    private float itemTextSize = 18;
     private Drawable drawable;
     private Drawable popupBackground;
     private Drawable popupDivider;
     private float popupDividerHeight;
-    private BaseAdapter adapter;
-    private List<Object> mOptions = new ArrayList<>();
-    private List<Object> displayedOptions = new ArrayList<>();
+    private SpinnerEditTextAdapter adapter = new SpinnerEditTextAdapter(getContext());
+    private List mOptions;
+    private List<Object> displayedOptions = new ArrayList<Object>();
+    /*count of hint,while you are typing*/
+    private int hintCount = 4;
 
     public SpinnerEditText(Context context) {
         this(context, null);
@@ -77,44 +84,43 @@ public class SpinnerEditText extends EditText implements AdapterView.OnItemClick
     private void init(Context context, AttributeSet attrs) {
 
 
-        if(ObjectUtils.isNotNull(attrs)) {
+        if (ObjectUtils.isNotNull(attrs)) {
             TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SimpleSpinnerEditText);
             popupBackground = typedArray.getDrawable(R.styleable.SimpleSpinnerEditText_popup_background);
             popupDivider = typedArray.getDrawable(R.styleable.SimpleSpinnerEditText_popup_divider);
             popupDividerHeight = typedArray.getDimension(R.styleable.SimpleSpinnerEditText_popup_divider_height, DensityUtils.dp2px(context, 1));
+            itemTextColor = typedArray.getColor(R.styleable.SpinnerEditText_popup_item_text_color, itemTextColor);
+            itemTextSize = typedArray.getDimension(R.styleable.SpinnerEditText_popup_item_text_size, DensityUtils.sp2px(getContext(), 18));
             typedArray.recycle();
         }
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             popupBackground = ObjectUtils.isNull(popupBackground) ? context.getResources().getDrawable(R.drawable.popup_window_bg, null) : popupBackground;
             popupDivider = ObjectUtils.isNull(popupDivider) ? context.getResources().getDrawable(R.drawable.divider_bg, null) : popupDivider;
-        }else{
+        } else {
             popupBackground = ObjectUtils.isNull(popupBackground) ? context.getResources().getDrawable(R.drawable.popup_window_bg) : popupBackground;
             popupDivider = ObjectUtils.isNull(popupDivider) ? context.getResources().getDrawable(R.drawable.divider_bg) : popupDivider;
         }
 
+        setTextColor(Color.BLACK);
         setLongClickable(false);
         setImeOptions(EditorInfo.IME_FLAG_NO_EXTRACT_UI);
         mListView = new ListView(context);
+        mListView.setAdapter(adapter);
         mListView.setBackground(popupBackground);
         mListView.setDivider(popupDivider);
-        mListView.setDividerHeight((int)popupDividerHeight);
+        mListView.setDividerHeight((int) popupDividerHeight);
         mListView.setOnItemClickListener(this);
         mPopupWindow = new PopupWindow(mListView, getWidth(), LinearLayout.LayoutParams.WRAP_CONTENT);
         mPopupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         mPopupWindow.setOutsideTouchable(true);
         mPopupWindow.setFocusable(false);
 
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1){
-            drawable = getCompoundDrawablesRelative()[2] == null ? getCompoundDrawables()[2] : getCompoundDrawablesRelative()[2];
-        }else{
-            drawable = getCompoundDrawables()[2];
-        }
+        drawable = getCompoundDrawablesRelative()[2] == null ? getCompoundDrawables()[2] : getCompoundDrawablesRelative()[2];
 
         if (ObjectUtils.isNull(drawable)) {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 drawable = getContext().getResources().getDrawable(R.drawable.ic_arrow_down_black, null);
-            }else{
+            } else {
                 drawable = getContext().getResources().getDrawable(R.drawable.ic_arrow_down_black);
             }
             drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
@@ -132,7 +138,8 @@ public class SpinnerEditText extends EditText implements AdapterView.OnItemClick
             }
 
             @Override
-            public void onDestroyActionMode(ActionMode mode) {}
+            public void onDestroyActionMode(ActionMode mode) {
+            }
 
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
@@ -144,28 +151,40 @@ public class SpinnerEditText extends EditText implements AdapterView.OnItemClick
 
     public void setPopupBackground(Drawable popupBackground) {
         this.popupBackground = popupBackground;
-        if(ObjectUtils.isNotNull(mListView)){
+        if (ObjectUtils.isNotNull(mListView)) {
             mListView.setBackground(popupBackground);
         }
     }
 
     public void setPopupDivider(Drawable popupDivider) {
         this.popupDivider = popupDivider;
-        if(ObjectUtils.isNotNull(mListView)){
+        if (ObjectUtils.isNotNull(mListView)) {
             mListView.setDivider(popupDivider);
         }
     }
 
     public void setPopupDividerHeight(float popupDividerHeight) {
         this.popupDividerHeight = popupDividerHeight;
-        if(ObjectUtils.isNotNull(mListView)){
-            mListView.setDividerHeight((int)popupDividerHeight);
+        if (ObjectUtils.isNotNull(mListView)) {
+            mListView.setDividerHeight((int) popupDividerHeight);
         }
     }
 
-    public void setSelectDrawable(Drawable drawable){
+    public void setSelectDrawable(Drawable drawable) {
         this.drawable = drawable;
-        super.setCompoundDrawables(getCompoundDrawables()[0],getCompoundDrawables()[1],drawable,getCompoundDrawables()[3]);
+        super.setCompoundDrawables(getCompoundDrawables()[0], getCompoundDrawables()[1], drawable, getCompoundDrawables()[3]);
+    }
+
+    public void setItemTextColor(int itemTextColor) {
+        this.itemTextColor = itemTextColor;
+    }
+
+    public void setItemTextSize(float itemTextSize) {
+        this.itemTextSize = itemTextSize;
+    }
+
+    public void setHintCount(int hintCount) {
+        this.hintCount = hintCount;
     }
 
     @Override
@@ -211,7 +230,7 @@ public class SpinnerEditText extends EditText implements AdapterView.OnItemClick
         switch (event.getAction()) {
             case MotionEvent.ACTION_UP:
                 if (getCompoundDrawables()[2] != null) {
-                    int start = getWidth() - getTotalPaddingEnd() + getPaddingEnd();
+                    int start = getWidth() - getTotalPaddingEnd() + getPaddingEnd() - DensityUtils.dp2px(getContext(), 11);
                     int end = getWidth();
                     boolean available = (event.getX() > start) && (event.getX() < end);
                     if (available) {
@@ -221,7 +240,7 @@ public class SpinnerEditText extends EditText implements AdapterView.OnItemClick
                             public void run() {
                                 show(mOptions);
                             }
-                        },200);
+                        }, 200);
                         return true;
                     }
                 }
@@ -230,17 +249,17 @@ public class SpinnerEditText extends EditText implements AdapterView.OnItemClick
     }
 
 
-
     private void show(List<Object> displayedOptions) {
         /**
          * measure the size of {@link ListView},if not ,{@link ListView#getMeasuredHeight()} is zero
          */
-        if(ObjectUtils.isNull(displayedOptions) || displayedOptions.size() <= 0){
+        if (ObjectUtils.isNull(displayedOptions) || displayedOptions.size() <= 0) {
             return;
         }
-
-        adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, displayedOptions);
-        mListView.setAdapter(adapter);
+        adapter.setList(displayedOptions);
+        adapter.setItemTextColor(itemTextColor);
+        adapter.setItemTextSize(itemTextSize);
+        adapter.notifyDataSetChanged();
         mListView.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
         int measuredHeight = getMeasuredHeight();
 //        DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
@@ -316,28 +335,39 @@ public class SpinnerEditText extends EditText implements AdapterView.OnItemClick
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-        if(ObjectUtils.isNull(mPopupWindow) || ObjectUtils.isNull(getText()))return;
-        if(!TextUtils.isEmpty(s)){
+
+        if (ObjectUtils.isNull(mPopupWindow) || ObjectUtils.isNull(getText())) return;
+        if (!TextUtils.isEmpty(s) && ObjectUtils.isNotNull(mOptions) && ObjectUtils.isNotNull(displayedOptions)) {
 
             boolean isSame = false;
             displayedOptions.clear();
-            for(Object obj:mOptions){
+            List<Object> temp = new ArrayList<Object>();
+            for (Object obj : mOptions) {
                 String objStr = obj.toString().toUpperCase();
-                if(objStr.equals(s.toString().toUpperCase())){
+                if (objStr.equals(s.toString().toUpperCase())) {
                     isSame = true;
                     mPopupWindow.dismiss();
+                    temp.clear();
                     break;
                 }
-                if(objStr.contains(s.toString().toUpperCase())){
-                    displayedOptions.add(obj);
+                if (objStr.contains(s.toString().toUpperCase())) {
+                    temp.add(obj);
                 }
             }
+            int size = temp.size();
 
-            if(!isSame) {
+            if (size > hintCount) {
+                displayedOptions.addAll(temp.subList(0, hintCount));
+            } else {
+                displayedOptions.addAll(temp);
+            }
+
+
+            if (!isSame) {
                 mPopupWindow.dismiss();
                 show(displayedOptions);
             }
-        }else {
+        } else {
             mPopupWindow.dismiss();
         }
 
@@ -353,13 +383,9 @@ public class SpinnerEditText extends EditText implements AdapterView.OnItemClick
         return mOptions;
     }
 
-    public void setOptions(List<Object> options) {
+    public <T> void setOptions(@NonNull List<T> options) {
         this.mOptions = options;
         this.displayedOptions.addAll(options);
-        if(ObjectUtils.isNotNull(options) && options.size() > 0){
-            setDrawableVisibility(true);
-        }else{
-            setDrawableVisibility(false);
-        }
+        setDrawableVisibility(options.size() > 0);
     }
 }
