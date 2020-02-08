@@ -24,7 +24,7 @@ dependencies {
 if your API is less than 19，suggest that use following dependency:
 ```java
 dependencies {
-  implementation 'com.github.wongkyunban:WEditText_Legacy:v1.0.0'
+  implementation 'com.github.wongkyunban:WEditText_Legacy:v1.0.2'
 }
 ```
 You alse can refer to 
