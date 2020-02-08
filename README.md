@@ -21,6 +21,14 @@ dependencies {
   implementation 'com.github.wongkyunban:WEditText:v1.0.1'
 }
 ```
+if your API is less than 19，suggest that use following dependency:
+```java
+dependencies {
+  implementation 'com.github.wongkyunban:WEditText_Legacy:v1.0.0'
+}
+```
+You alse can refer to 
+![WEditText_Legacy](https://github.com/wongkyunban/WEditText_Legacy)
 
 # Detail
 ## ClearEditText
